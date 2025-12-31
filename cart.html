@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>购物车 - 在线购物平台</title>
+    <style>
+      /* 基础样式 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      /* 导航栏样式 */
+      header {
+        background-color: #2c3e50;
+        color: white;
+        padding: 1rem 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+      }
+
+      .nav-links li {
+        margin-left: 1.5rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #3498db;
+      }
+
+      /* 购物车内容样式 */
+      .cart-section {
+        background: white;
+        padding: 2rem 0;
+        margin: 2rem 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .cart-section h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #2c3e50;
+      }
+
+      .cart-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      .cart-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        background: #fff;
+      }
+
+      .cart-item-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 1rem;
+      }
+
+      .cart-item-info {
+        flex: 1;
+      }
+
+      .cart-item-name {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .cart-item-price {
+        color: #e74c3c;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .cart-item-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .quantity-btn {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #ddd;
+        background: #f5f5f5;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+
+      .quantity-input {
+        width: 50px;
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 0.25rem;
+        border-radius: 4px;
+      }
+
+      .remove-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 1rem;
+      }
+
+      .remove-btn:hover {
+        background: #c0392b;
+      }
+
+      .cart-summary {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+
+      .summary-total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid #eee;
+      }
+
+      .checkout-btn {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background 0.3s;
+      }
+
+      .checkout-btn:hover {
+        background: #219a52;
+      }
+
+      .checkout-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      /* 用户菜单样式 */
+      .user-menu {
+        position: relative;
+        display: inline-block;
+      }
+
+      .user-name {
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+
+      .user-name:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background: white;
+        min-width: 160px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 4px;
+        overflow: hidden;
+        right: 0;
+        top: 100%;
+      }
+
+      .dropdown-content a {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background 0.3s;
+      }
+
+      .dropdown-content a:hover {
+        background: #f5f5f5;
+      }
+
+      .dropdown-content a.danger {
+        color: #e74c3c;
+      }
+
+      .user-menu:hover .dropdown-content {
+        display: block;
+      }
+
+      /* 页脚 */
+      footer {
+        background: #2c3e50;
+        color: white;
+        text-align: center;
+        padding: 1rem 0;
+        margin-top: 3rem;
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 768px) {
+        .cart-item {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .cart-item-image {
+          margin-right: 0;
+          margin-bottom: 1rem;
+        }
+
+        .cart-item-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .remove-btn {
+          margin-left: 0;
+          margin-top: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 导航栏 -->
+    <header>
+      <div class="container">
+        <nav>
+          <div class="logo">在线购物平台</div>
+          <ul class="nav-links">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="products.html">商品</a></li>
+            <li><a href="cart.html">购物车</a></li>
+            <li><a href="orders.html">我的订单</a></li>
+            <li id="loginLink"><a href="login.html">登录/注册</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- 购物车内容 -->
+    <div class="cart-section">
+      <div class="container">
+        <div class="cart-container">
+          <h2>购物车</h2>
+          <div id="cartItems">
+            <!-- 购物车商品将通过JavaScript动态加载 -->
+          </div>
+          <div id="cartSummary" class="cart-summary" style="display: none;">
+            <div class="summary-row">
+              <span>商品总数:</span>
+              <span id="totalItems">0</span>
+            </div>
+            <div class="summary-row">
+              <span>商品总金额:</span>
+              <span id="totalPrice">¥0.00</span>
+            </div>
+            <div class="summary-row summary-total">
+              <span>总计:</span>
+              <span id="grandTotal">¥0.00</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">结账</button>
+          </div>
+          <div id="emptyCartMessage" style="text-align: center; padding: 2rem;">
+            <p>购物车是空的</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+      <div class="container">
+        <p>&copy; 2024 在线购物平台 - 课程设计项目</p>
+      </div>
+    </footer>
+
+    <script>
+      // 页面加载时初始化
+      document.addEventListener("DOMContentLoaded", function () {
+        updateNavigation();
+        loadCart();
+      });
+
+      // 更新导航栏登录状态
+      function updateNavigation() {
+        const userName = localStorage.getItem("userName");
+        const token = localStorage.getItem("token");
+        const loginLink = document.getElementById("loginLink");
+
+        if (token && userName) {
+          loginLink.innerHTML = `
+                    <div class="user-menu">
+                        <span class="user-name">${userName}</span>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="logout()">退出登录</a>
+                            <a href="#" onclick="deleteAccount()" class="danger">注销账号</a>
+                        </div>
+                    </div>
+                `;
+        } else {
+          loginLink.innerHTML = '<a href="login.html">登录/注册</a>';
+        }
+      }
+
+      // 退出登录功能
+      function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userName");
+        alert("已退出登录");
+        window.location.reload();
+      }
+
+      // 注销账号功能
+      function deleteAccount() {
+        if (
+          confirm(
+            "重要提醒：注销账号操作不可逆，请谨慎使用\n\n确定要注销账号吗？"
+          )
+        ) {
+          const token = localStorage.getItem("token");
+          fetch("http://localhost:8080/api/user/account", {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.message) {
+                alert(data.message);
+                localStorage.removeItem("token");
+                localStorage.removeItem("userEmail");
+                localStorage.removeItem("userName");
+                window.location.reload();
+              } else {
+                alert("注销失败: " + data.error);
+              }
+            })
+            .catch((error) => {
+              console.error("注销错误:", error);
+              alert("注销失败，请检查网络连接");
+            });
+        }
+      }
+
+      // 加载购物车数据
+      async function loadCart() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("请先登录后再查看购物车");
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:8080/api/cart", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (!response.ok) throw new Error("获取购物车失败");
+
+          const cartItems = await response.json();
+          displayCart(cartItems);
+        } catch (error) {
+          console.error("加载购物车失败:", error);
+          document.getElementById("cartItems").innerHTML =
+            "<p>加载购物车失败，请稍后重试</p>";
+        }
+      }
+
+      // 显示购物车
+      function displayCart(cartItems) {
+        const cartContainer = document.getElementById("cartItems");
+        const emptyCartMessage = document.getElementById("emptyCartMessage");
+        const cartSummary = document.getElementById("cartSummary");
+
+        if (cartItems.length === 0) {
+          cartContainer.innerHTML = "";
+          emptyCartMessage.style.display = "block";
+          cartSummary.style.display = "none";
+          return;
+        }
+
+        emptyCartMessage.style.display = "none";
+        cartSummary.style.display = "block";
+
+        cartContainer.innerHTML = cartItems
+          .map((item) => {
+            // 使用本地图片路径
+            const imageUrl = `images/products/product_${item.product_id}_300x200.jpg`;
+            return `
+                    <div class="cart-item" data-product-id="${item.product_id}">
+                        <img src="${imageUrl}" 
+                             alt="${item.name}" class="cart-item-image">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">¥${item.price}</div>
+                            <div class="cart-item-actions">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn" onclick="updateQuantity(${item.product_id}, ${item.quantity - 1})">-</button>
+                                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity(${item.product_id}, parseInt(this.value))">
+                                    <button class="quantity-btn" onclick="updateQuantity(${item.product_id}, ${item.quantity + 1})">+</button>
+                                </div>
+                                <button class="remove-btn" onclick="removeFromCart(${item.product_id})">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+          })
+          .join("");
+
+        updateCartSummary(cartItems);
+      }
+
+      // 更新购物车摘要
+      function updateCartSummary(cartItems) {
+        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const totalPrice = cartItems.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+
+        document.getElementById("totalItems").textContent = totalItems;
+        document.getElementById("totalPrice").textContent = `¥${totalPrice.toFixed(2)}`;
+        document.getElementById("grandTotal").textContent = `¥${totalPrice.toFixed(2)}`;
+      }
+
+      // 更新商品数量
+      async function updateQuantity(productId, newQuantity) {
+        if (newQuantity < 1) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("请先登录");
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `http://localhost:8080/api/cart/${productId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ quantity: newQuantity }),
+            }
+          );
+
+          if (!response.ok) throw new Error("更新数量失败");
+
+          const result = await response.json();
+          loadCart(); // 重新加载购物车
+        } catch (error) {
+          console.error("更新数量失败:", error);
+          alert("更新数量失败，请稍后重试");
+        }
+      }
+
+      // 从购物车移除商品
+      async function removeFromCart(productId) {
+        if (!confirm("确定要从购物车中删除这个商品吗？")) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("请先登录");
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `http://localhost:8080/api/cart/${productId}`,
+            {
+              method: "DELETE",
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          if (!response.ok) throw new Error("删除商品失败");
+
+          loadCart(); // 重新加载购物车
+        } catch (error) {
+          console.error("删除商品失败:", error);
+          alert("删除商品失败，请稍后重试");
+        }
+      }
+
+      // 结账功能
+      async function checkout() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("请先登录后再结账");
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:8080/api/orders", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert("订单创建成功！");
+            loadCart(); // 重新加载购物车，此时应该为空
+          } else {
+            alert("结账失败: " + result.error);
+          }
+        } catch (error) {
+          console.error("结账失败:", error);
+          alert("结账失败，请稍后重试");
+        }
+      }
+    </script>
+  </body>
+</html>
+    <style>
+      /* 用户菜单样式 */
+      .user-menu {
+        position: relative;
+        display: inline-block;
+      }
+
+      .user-name {
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+
+      .user-name:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background: white;
+        min-width: 160px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 4px;
+        overflow: hidden;
+        right: 0;
+        top: 100%;
+      }
+
+      .dropdown-content a {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background 0.3s;
+      }
+
+      .dropdown-content a:hover {
+        background: #f5f5f5;
+      }
+
+      .dropdown-content a.danger {
+        color: #e74c3c;
+      }
+
+      .user-menu:hover .dropdown-content {
+        display: block;
+      }
+    </style>
+    <script>
+      // 页面加载时检查登录状态
+      document.addEventListener("DOMContentLoaded", function () {
+        updateNavigation();
+        loadCart(); // 加载购物车数据
+      });
+
+      function updateNavigation() {
+        const userName = localStorage.getItem("userName");
+        const token = localStorage.getItem("token");
+        const loginLink = document.getElementById("loginLink");
+
+        if (token && userName) {
+          // 用户已登录，显示用户名和下拉菜单
+          loginLink.innerHTML = `
+            <div class="user-menu">
+              <span class="user-name">${userName}</span>
+              <div class="dropdown-content">
+                <a href="#" onclick="logout()">退出登录</a>
+                <a href="#" onclick="deleteAccount()" class="danger">注销账号</a>
+              </div>
+            </div>
+          `;
+        } else {
+          // 用户未登录，显示登录/注册链接
+          loginLink.innerHTML = '<a href="login.html">登录/注册</a>';
+        }
+      }
+
+      // 退出登录功能
+      function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userName");
+        alert("已退出登录");
+        window.location.reload();
+      }
+
+      // 注销账号功能
+      function deleteAccount() {
+        if (
+          confirm(
+            "重要提醒：注销账号操作不可逆，请谨慎使用\n\n确定要注销账号吗？"
+          )
+        ) {
+          const token = localStorage.getItem("token");
+
+          fetch("http://localhost:3000/api/user/account", {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.message) {
+                alert(data.message);
+                localStorage.removeItem("token");
+                localStorage.removeItem("userEmail");
+                localStorage.removeItem("userName");
+                window.location.reload();
+              } else {
+                alert("注销失败: " + data.error);
+              }
+            })
+            .catch((error) => {
+              console.error("注销错误:", error);
+              alert("注销失败，请检查网络连接");
+            });
+        }
+      }
+    </script>
+  </body>
+</html>
